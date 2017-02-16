@@ -20,6 +20,8 @@ bundle install
 
 You can edit some basic settings for each Environment (you can add some ENV's here) under `config/app.yml`
 
-Picture:
+Pictures:
 
-![alt text](https://preview.ibb.co/i3NG3v/Bildschirmfoto_2017_02_16_um_17_10_48.png "Example")
+![alt text](https://preview.ibb.co/i3NG3v/Bildschirmfoto_2017_02_16_um_17_10_48.png "Landing Page")
+![alt text](https://preview.ibb.co/m2XG3v/Bildschirmfoto_2017_02_16_um_17_27_45.png "Encryption View")
+![alt text](https://preview.ibb.co/kwBnAa/Bildschirmfoto_2017_02_16_um_17_28_02.png "Decryption View")
