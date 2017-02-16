@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'ezcrypto'
+
+if ARGV[0].nil? or ARGV[0].empty?
+  print "Usage: ruby #{$0} [KEYNAME]\n"
+  exit 1
+end
+
+EzCrypto::Key.generate(:algorithm => "aes-256-cbc").tap do |key|
+  key.store("./#{ARGV[0]}")
+end

@@ -1,0 +1,261 @@
+<style>
+  #dialogoverlay{
+    display: none;
+    opacity: .8;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: #FFF;
+    width: 100%;
+    z-index: 10;
+  }
+  #dialogbox{
+    display: none;
+    position: absolute;
+    background: #000;
+    border-radius:7px;
+    width:750px;
+    z-index: 10;
+  }
+  #dialogbox > div{ background:#FFF; margin:8px; }
+  #dialogbox > div > #dialogboxhead{ background: #666; font-size:19px; padding:10px; color:#CCC; }
+  #dialogbox > div > #dialogboxbody{ background:#333; padding:20px; color:#FFF; }
+  #dialogbox > div > #dialogboxfoot{ background: #666; padding:10px; text-align:right; }
+</style>
+
+<script type="text/javascript">
+  var localURL = "<%= requestObject.url[/^(http....*)\//,1] %>"
+
+  // define functions
+  function get_restcall(url, success){
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: url,
+      success: function(data){
+        if (data.redirect) {
+          console.log("here")
+          // window.location = data.redirect;
+        } else {
+          success(data);
+        }
+      },
+      error: function(xhr, ajaxOptions, thrownError){
+        customeAlert.render('ServerCall Error occured',
+          'Holy Cow - there was an ERROR during the operation'
+          + '<br>'
+          + '<b>Status:</b> ' + xhr.status + '<br>'
+          + '<b>Message: </b>' + xhr.responseText
+        )
+      },
+      timeout: 10000
+    });
+  }
+  function post_restcall(url, payload, success){
+    $.ajax({
+      type: "POST",
+      dataType: "text",
+      url: url,
+      data: payload,
+      success: function(data){
+        success(data);
+      },
+      error: function(xhr, ajaxOptions, thrownError){
+        customeAlert.render('ServerCall Error occured',
+          'Holy Cow - there was an ERROR during the operation'
+          + '<br>'
+          + '<b>Status:</b> ' + xhr.status + '<br>'
+          + '<b>Message: </b>' + xhr.responseText
+        )
+      },
+      timeout: 10000
+    });
+  }
+  // custome dialog box
+  function CustomAlert(){
+    this.render = function(title ,dialog){
+      var winW = window.innerWidth;
+      var winH = window.innerHeight;
+      var dialogoverlay = document.getElementById('dialogoverlay');
+      var dialogbox = document.getElementById('dialogbox');
+      dialogoverlay.style.display = "block";
+      dialogoverlay.style.height = winH+"px";
+      dialogbox.style.left = (winW/2) - (750 * .5)+"px";
+      dialogbox.style.top = "100px";
+      dialogbox.style.display = "block";
+      document.getElementById('dialogboxhead').innerHTML = title;
+      document.getElementById('dialogboxbody').innerHTML = dialog;
+      document.getElementById('dialogboxfoot').innerHTML = '<center><button class="btn btn-success btn-l" onclick="customeAlert.ok()">OK</button></center>';
+    }
+    this.ok = function(){
+      document.getElementById('dialogbox').style.display = "none";
+      document.getElementById('dialogoverlay').style.display = "none";
+      //location.reload();
+    }
+  }
+
+  // logic in DOM
+  $(document).ready(function(){
+    customeAlert = new CustomAlert();
+    $('[data-toggle="popover"]').popover({"html": true})
+    $('.decrypt').click(function() {
+      var myCstring = $('#cryptedString').val();
+      var hash = myCstring.split(/decrypt\//)[1]
+      get_restcall(localURL + "/debug/" + hash, function(debugresponse){
+        if ( debugresponse.type == "proxy" ) {
+          get_restcall(localURL + "/decrypt/" + hash, function(response){
+            customeAlert.render('Enigma decrypted your Informations:',
+              'Encrypted Meta Informations:'
+              + '<textarea class="form-control" rows="8" readonly="true">'+ JSON.stringify(debugresponse, null, '\t') +'</textarea>'
+              + '<br><br>'
+              + 'Response for the Request:'
+              + '<textarea class="form-control" rows="20" readonly="true">'+ JSON.stringify(response, null, '\t') +'</textarea>'
+            )
+          });
+        } else {
+          customeAlert.render('Enigma decrypted your Informations:',
+            'Encrypted Meta Informations:'
+            + '<textarea class="form-control" rows="8" readonly="true">'+ JSON.stringify(debugresponse, null, '\t') +'</textarea>'
+          )
+        };
+      });
+    });
+
+    $('.encrypt').click(function(){
+      var sitepayload = {
+        username: $('#username').val(),
+        password: $('#password').val(),
+        server: $('#server').val(),
+        type: $('input[name=type]:checked').val()
+      };
+      console.log(sitepayload);
+      post_restcall(localURL + "/encrypt", sitepayload, function(response){
+        customeAlert.render('Your encrypted Enigma Link:',
+          '<br>'
+          + '<pre>'+localURL + '/decrypt/'+ response +'</pre>'
+        )
+      });
+    });
+  });
+</script>
+
+<br>
+<div id="dialogoverlay"></div>
+<div id="dialogbox">
+  <div>
+    <div id="dialogboxhead"></div>
+    <div id="dialogboxbody"></div>
+    <div id="dialogboxfoot"></div>
+  </div>
+</div>
+<center>
+<div class="well" style="width: 75%;">
+  <center><h1><span class="label label-primary">Encryption</span></h1></center>
+  <br>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <table boder="0" width=100%">
+        <tr>
+          <td width="20%"></td>
+          <td width="20%" align="right"><h4 class="panel-title">Identity Informations</h4></td>
+          <td width="20%">
+            <button type="button" class="btn btm-sm btn-default" data-toggle="popover" title="User Credentials" data-content="You can define user credentials for your Call.<br><br><b>This is optional</b>" data-placement="right"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></button>
+          </td>
+          <td width="20%"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-body">
+      <table border="0" align="center" width="75%">
+        <tr>
+          <td width="20%">Username</td>
+          <td width="25%"><input name="username" class="form-control" id="username" type="text"></td>
+          <td width="10%"></td>
+          <td width="20%">Password</td>
+          <td width="25%"><input name="password" class="form-control" id="password" type="text"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <table boder="0" width=100%">
+        <tr>
+          <td width="20%"></td>
+          <td width="20%" align="right"><h4 class="panel-title">Server Informations</h4></td>
+          <td width="20%">
+            <button type="button" class="btn btm-sm btn-default" data-toggle="popover" title="Connection String" data-content="Please provide an URL to the <b>JSON REST</b> API" data-placement="right"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></button>
+          </td>
+          <td width="20%"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-body">
+      <table border="0" align="center" width="75%">
+        <tr>
+          <td width="20%">URL</td>
+          <td width="80%" colspan="4"><input name="server" class="form-control" id="server" type="text"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <table boder="0" width=100%">
+        <tr>
+          <td width="20%"></td>
+          <td width="20%" align="right"><h4 class="panel-title">Options</h4></td>
+          <td width="20%">
+            <button type="button" class="btn btm-sm btn-default" data-toggle="popover" title="Connection Options" data-content="There are different Types to choose:<br><br><b>Proxy:</b> the Shortener will make the Call and returns the response to you<br><b>Redirect:</b> not yet working<br><b>Debug:</b> you will only get the Decrypted Meta Informations back - for debuging purpose" data-placement="right"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></button>
+          </td>
+          <td width="20%"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-body">
+      <table border="0" align="center" width="75%">
+        <tr>
+          <td align="center">
+            <label class="radio-inline"><input type="radio" name="type" value="proxy" checked>Proxy</label>
+            <label class="radio-inline"><input type="radio" name="type" value="redirect">Redirect (not yet working)</label>
+            <label class="radio-inline"><input type="radio" name="type" value="debug">Debug</label>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br>
+  <button type="submit" class="btn btn-success btn-l encrypt"><span class="glyphicon glyphicon-share">Generate</button>
+</div>
+<br><br>
+<div class="well" style="width: 75%;">
+  <center><h1><span class="label label-primary">Decryption</span></h1></center>
+  <br>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+        <table boder="0" width=100%">
+          <tr>
+            <td width="20%"></td>
+            <td width="20%" align="right"><h4 class="panel-title">Test your link here</h4></td>
+            <td width="20%">
+              <button type="button" class="btn btm-sm btn-default" data-toggle="popover" title="Decryption" data-content="You can test your generated Link here - just paste your Link in the Box and click 'Decrypt'" data-placement="right"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></button>
+            </td>
+            <td width="20%"></td>
+          </tr>
+        </table>
+      </div>
+    <div class="panel-body">
+      <table border="0" align="center" width="75%">
+        <tr>
+          <td><input name="cstring" class="form-control" id="cryptedString" type="text"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br>
+  <button type="submit" class="btn btn-success btn-l decrypt"><span class="glyphicon glyphicon-share">Decrypt</button>
+</div>
+<br>
+</center>

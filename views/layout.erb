@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+  <head>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.css" rel="stylesheet">
+    <!-- JQuery via google + local fallback -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/jquery.js"><\/script>')</script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="//www.google.com/jsapi"></script>
+    <script src="/js/mouse-hover.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('[data-toggle="popover"]').popover({"html": true})
+      });
+    </script>
+  </head>
+  <body style="padding-top: 50px;">
+    <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="navbar-header">
+        <table border="0">
+          <tr>
+            <td><a class="navbar-brand" href="/"><b>Shortener</b></a></td>
+            <td>
+              <button type="button" class="btn btm-sm btn-default" data-toggle="popover" title="Wiki Shortener" data-content="This Tool was developed to encrypt User Credentials and URL for REST-Calls in Confluence JSON-Tables" data-placement="bottom"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav"></ul>
+        <ul class="nav navbar-nav navbar-right">
+          <table border="0">
+            <tr>
+              <td width="40%" align="right"><li><span class="label label-info"><%= settings.version %></span></li></td>
+              <td width="10%"></td>
+              <td width="40%"><li><img src="/img/logo.jpg" height="40px"/></li></td>
+              <td width="5%"></td>
+            </tr>
+          </table>
+        </ul>
+      </div>
+    </nav>
+    <%= yield %>
+  </body>
+</html>

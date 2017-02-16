@@ -1,0 +1,27 @@
+LOCAL:
+  processName: wiki-shortener
+  appPort: 8080
+  proxy:
+  timeformat: '%Y%m%d_%H%M%S'
+  keyFile: "encryption.key"
+
+DEV:
+  processName: wiki-shortener
+  appPort: 8080
+  proxy: 
+  timeformat: '%Y%m%d_%H%M%S'
+  keyFile: "encryption.dev.key"
+
+QA:
+  processName: wiki-shortener
+  appPort: 8080
+  proxy: 
+  timeformat: '%Y%m%d_%H%M%S'
+  keyFile: "encryption.qa.key"
+
+LIVE:
+  processName: wiki-shortener
+  appPort: 8080
+  proxy: 
+  timeformat: '%Y%m%d_%H%M%S'
+  keyFile: "encryption.live.key"
