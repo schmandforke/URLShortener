@@ -1,4 +1,4 @@
-source 'http://rubygems.int.nexinto.com'
+source 'https://rubygems.org'
 
 gem 'sinatra', '1.4.6'
 gem 'ezcrypto', '0.7.2'
