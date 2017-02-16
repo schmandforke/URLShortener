@@ -21,4 +21,4 @@ bundle install
 You can edit some basic settings for each Environment (you can add some ENV's here) under `config/app.yml`
 
 Picture:
-![alt text](http://www.imageno.com/5tel53qcjp19pic.html "Example")
+![alt text](http://www.imageno.com/thumbs/20170216/5tel53qcjp19.jpg "Example")
